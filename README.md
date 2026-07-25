@@ -1,5 +1,5 @@
 # Bad Apple Anywhere
-ffmpeg wrapper scripts to get bad apple pixels in a variety of formats
+ffmpeg wrapper scripts to display [Bad Apple](https://knowyourmeme.com/memes/bad-apple) pixels in a variety of formats
 
 ## badapple.mp4
 You need this video. You need to get it yourself
@@ -9,4 +9,5 @@ You need this video. You need to get it yourself
 * Greyscale or Binary Options?
 * Anti Aliasing Options?
 * Compress and decompress output frames on the fly?
+* Consoldate the scripts into one with better CLI options
 * A better README file which actually explains anything

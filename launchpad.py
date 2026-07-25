@@ -21,19 +21,22 @@ TARGET_FPS = 60
 INTERVAL = 1.0 / TARGET_FPS
 next_time = time.perf_counter()
 
-for file in sorted(directory_path.iterdir()):
-    img = Image.open(file)
-    height, width = img.size
-    pixels = img.load()
-    for x in range(width):
-        for y in range(height):
-            # Get the current pixel value (R, G, B)
-            r, g, b = pixels[x, y]
-            lp.panel.led(x,y+1).color = (r,g,b)
+lp.panel.reset()  # Turn off all LEDs
 
-    next_time += INTERVAL
-    sleep_time = next_time - time.perf_counter()
-    if sleep_time > 0:
-        time.sleep(sleep_time)
-    else:
-        next_time = time.perf_counter()
+while 1: # loop forever, lol
+    for file in sorted(directory_path.iterdir()):
+        img = Image.open(file)
+        height, width = img.size
+        pixels = img.load()
+        for x in range(width):
+            for y in range(height):
+                # Get the current pixel value (R, G, B)
+                r, g, b = pixels[x, y]
+                lp.panel.led(x,y+1).color = (r,g,b)
+
+        next_time += INTERVAL
+        sleep_time = next_time - time.perf_counter()
+        if sleep_time > 0:
+            time.sleep(sleep_time)
+        else:
+            next_time = time.perf_counter()
