@@ -12,6 +12,8 @@
 #include <libavutil/imgutils.h>
 
 // ---- Comiple-Time Definitions ----
+// TODO: add badapple_config.h so the user can override these if they want?
+
 #ifndef BADAPPLE_FILENAME
 #define BADAPPLE_FILENAME "badapple.mp4"
 #endif
@@ -21,8 +23,8 @@
 #endif
 
 #ifndef BADAPPLE_SCALE_FLAGS
-//#define BADAPPLE_SCALE_FLAGS SWS_POINT // nearest neighbor sampling
-#define BADAPPLE_SCALE_FLAGS SWS_BILINEAR
+#define BADAPPLE_SCALE_FLAGS SWS_POINT // nearest neighbor sampling (looks the best in my opinion)
+//#define BADAPPLE_SCALE_FLAGS SWS_BILINEAR
 #endif
 
 #define BADAPPLE_SCALE_STRETCH 0
@@ -144,6 +146,14 @@ bool badapple_init(badapple_ctx_t *ctx)
 
     if (priv == NULL) {
         return false;
+    }
+
+    // if the user didn't allocate their buffer, we can do that for them
+    if (ctx->bitmap == NULL) {
+        ctx->bitmap = calloc(ctx->width * ctx->height, sizeof(*ctx->bitmap));
+        if (ctx->bitmap == NULL) {
+            return false;
+        }
     }
 
     ctx->priv = priv;
@@ -377,7 +387,7 @@ bool badapple_play(badapple_ctx_t *ctx)
         badapple_sleep_until(presentation_time_us);
 
         if (ctx->cb != NULL) {
-            if (!ctx->cb(ctx, &frame)) {
+            if (!ctx->cb(&frame)) {
                 return false;
             }
         }

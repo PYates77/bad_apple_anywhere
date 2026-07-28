@@ -2,22 +2,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-static bool display_frame(badapple_ctx_t *ctx, const badapple_frame_info_t *frame)
+static const char *ascii_gradient = " .'`^,:;Il!i><~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+
+static bool display_frame(const badapple_frame_info_t *frame)
 {
     printf("\033[H"); // jump to top left of terminal window
 
     for (uint32_t y = 0; y < frame->height; y++) {
         for (uint32_t x = 0; x < frame->width; x++) {
-            uint8_t pixel =
-                frame->bitmap[y * frame->width + x];
+            uint8_t pixel = frame->bitmap[y * frame->width + x];
 
-            // just draw a light or dark square for now
-            if (pixel > 128) {
-                putchar('#');
-            } else {
-                putchar(' ');
-            }
+            // choose a character depding on pixel darkness
+            uint32_t index = (pixel * (strlen(ascii_gradient) - 1)) / 255;
+            putchar(ascii_gradient[index]);
         }
 
         putchar('\n');
@@ -31,17 +30,14 @@ static bool display_frame(badapple_ctx_t *ctx, const badapple_frame_info_t *fram
 
 int main(void)
 {
+    // set up using our display settings
     badapple_ctx_t ctx = {
         .width = 180,
         .height = 60,
         .fps = 30,
         .cb = display_frame,
+        .bitmap = NULL,
     };
-
-    ctx.bitmap = calloc(ctx.width * ctx.height, sizeof(*ctx.bitmap));
-    if (ctx.bitmap == NULL) {
-        return 1;
-    }
 
     if (!badapple_init(&ctx)) {
         free(ctx.bitmap);
